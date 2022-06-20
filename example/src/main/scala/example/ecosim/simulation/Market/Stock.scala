@@ -8,7 +8,7 @@ import java.util.ArrayList
 import scala.collection.mutable.{Map, ListBuffer}
 
 /**
- * Residual inventory
+ * Residual inventory : asynchronous source of the market
  **/
 class Stock(start_quantity: Int, commodity: Commodity) 
 extends Seller 

@@ -95,6 +95,7 @@ with InteractiveSecurity {
     println("Security Ready")
 
     while (currentResolution < resolution) {
+        println("---------------------Resolution "+currentResolution+"------------------------")
         // Ensures synchronization between all agents
         // Wait for the actions of all agents to ensure synchronization and correct price
         while (timedParticipation(currentResolution) != numberActors) {

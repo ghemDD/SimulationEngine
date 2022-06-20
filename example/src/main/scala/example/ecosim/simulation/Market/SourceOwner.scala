@@ -8,21 +8,15 @@ import scala.collection.mutable.{Map}
  *  we can define Farm as Source(), Mill as Source()...
 **/
 @lift
-class Person(val name: String, 
+class SourceOwner(val name: String, 
 val startingCapital: Double, 
-val wishList: List[Commodity],
+val commodity: Commodity,
 val market: Market,
 val start: Inventor,
 val sells: Inventor,
 val resolution: Int) extends Actor 
 with Seller 
 with Buyer {
-
-
-  // 0-1 scale
-  val hunger: Double = 0.5
-  val boredom: Double = 0.5
-
 
   // Valuation
   var capital: Double = 0 // $
@@ -53,7 +47,6 @@ with Buyer {
       0
     )
 
-
   // Buyer 
   override def getName(): String = {
     name
@@ -62,7 +55,7 @@ with Buyer {
   override def getInventory(): Inventor = {
     inventory
   }
-  
+
   // Seller
   override def sell(offer: Offer): Unit = {
     // Remove line from sell_inventory
@@ -75,40 +68,44 @@ with Buyer {
    * In the ideal case, the Actor Owner would be abstract so we only have to 
    * modify this function to define the behavior of an agent
    **/
-  def action(): Unit = {
+  def behavior(): Unit = {
     //val filtered = offerState.filter(o => wishList.exists(c => c.name == o.commodity.name) && o.price_unit <= capital)
-    if (hunger > 0.7) {
-      market.enter_buy_order(
-        Commodities.Beef,
-        currentResolution, 
-        this, 
-        1, 
-        capital
-      )
-      
-    } else if (boreness > 0.8) {
-      market.enter_buy_order(
+    /**
+    if (sell_inventory.lines.isEmpty) {
+        val quant = 10
+        sell_inventory.addLine(InventoryLine(commodity, quant, 9.99))
+        market.enter_sell_order(currentResolution, sell_inventory.lines.head.toOffer(quant, this))
+    } **/
+
+    if (Random.nextInt(1) == 0) {
+      if (!sell_inventory.lines.isEmpty) {
+        market.enter_sell_order(currentResolution, sell_inventory.lines.head.toOffer(1, this))
+      }
+    } else {
+        //val rand = Random.nextInt(wishList.size)
+        val bought = market.enter_buy_order(
+        //wishList(rand), 
         Commodities.Ticket,
         currentResolution, 
         this, 
         1, 
-        capital / 2
-      )
+        10000
+      ) 
     }
+
+    println("Stock added")
   }
 
   /** Prints status info (Inventory). */
   def show(sell: Boolean): Unit = { 
     if (sell) {
-      println("---------------------------------"+ 
-      name+"\n"+
+      println("-----------------"+ name +" ----------------\n"+ 
       sell_inventory.toString()+
-      "---------------------------------")
+      "------------------------------------------")
     } else {
-      println("---------------------------------"+ 
-      name+"\n"+
+      println("-----------------"+ name +" ----------------\n"+ 
       inventory.toString()+
-      "---------------------------------")
+      "------------------------------------------")
     }
   }
 
@@ -133,7 +130,7 @@ with Buyer {
           waitLabel(Turn , 1)
       }
       
-      action()
+      behavior()
       market.report(currentResolution)
       println("Current Resolution : " + currentResolution + " | Owner action")
 

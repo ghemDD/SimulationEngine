@@ -56,7 +56,7 @@ val resolution: Int) extends Actor {
 
     def aggregate(): Unit = {
         // TODO: Register the min / average / max price for each Commodity
-        println("AGGREGATE")
+        println("Resolution completed")
     }
 
 
@@ -71,23 +71,25 @@ val resolution: Int) extends Actor {
         if (time == currentResolution) {
             // Lowest price first match 
             val nameFilter = offerState.filter(_.commodity.name == commodity.name)
-            
-            if (nameFilter.isEmpty) {
-                println("Name filter : no match")
-            }
 
             val priceFilter = nameFilter
                       .filter(o => o.quantity >= units && limit_price >= (units * o.price_unit))
 
+            val filtered = priceFilter
+                      .sortWith(_.price_unit <= _.price_unit)
+
+            /** DEBUG
+            if (nameFilter.isEmpty) {
+                println("Name filter : no match")
+            } 
+
             if (priceFilter.isEmpty) {
                 println("Price filter : no match")
             }
-
-            val filtered = priceFilter
-                      .sortWith(_.price_unit <= _.price_unit)
+            **/
             
             if (filtered.isEmpty) {
-                println("No complete match found")
+                println(buyer.getName()+": No complete match found")
                 0
             } else {
                 val bestOffer = filtered(0)
@@ -118,7 +120,7 @@ val resolution: Int) extends Actor {
             offerState += offer
             // Debug
             //offer.seller.sell(offer)
-            println("Offer registered : "+ offer.toString)
+            println(offer.toString)
             true
         } else {
             false
@@ -126,12 +128,10 @@ val resolution: Int) extends Actor {
     }
 
     def show(): Unit = {
-        println("""\n---------------- MARKET ----------------\n
-        ------BEGIN MARKET STATE------\n
-        Current Market State at resolution  """+currentResolution+"\n"+
+        println("\n---------------- MARKET ----------------\n"+
+        "------BEGIN MARKET STATE : Resolution "+ currentResolution + " ------\n"+
         offerState.foldLeft("")((s, o) => s + o.toString()+ "\n")+
-        """------END MARKET STATE------
-        ----------------------------------------\n""")
+        "------END MARKET STATE------")
     }
 
 
@@ -150,7 +150,7 @@ val resolution: Int) extends Actor {
         println("OPENING MARKET")
 
         while (currentResolution < resolution) {
-            println("-------------- BEGIN RESOLUTION "+currentResolution+"--------------------")
+            println("-------------- RESOLUTION "+currentResolution+"--------------------")
             //show()
             
             // Wait for the actions of all agents to ensure synchronization
@@ -161,7 +161,6 @@ val resolution: Int) extends Actor {
             aggregate()
             currentResolution = currentResolution + 1
             waitLabel(Turn, 1)
-            println("-------------- END RESOLUTION "+currentResolution+"--------------------")
         } 
 
         // Plot Commodities charts

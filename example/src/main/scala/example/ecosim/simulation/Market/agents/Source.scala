@@ -4,13 +4,11 @@ import meta.classLifting.SpecialInstructions._
 import squid.quasi.lift
 import scala.collection.mutable.{Map}
 
-/** Sources only produces and sell on the market : therefore
- *  we can define Farm as Source(), Mill as Source()...
-**/
+/** Owner can act as Seller and Buyer **/
 @lift
 class Source(val name: String, 
 val startingCapital: Double, 
-val commodity: Commodity,
+val productions: List[Commodity],
 val market: Market,
 val start: Inventor,
 val sells: Inventor,
@@ -55,7 +53,7 @@ with Buyer {
   override def getInventory(): Inventor = {
     inventory
   }
-
+  
   // Seller
   override def sell(offer: Offer): Unit = {
     // Remove line from sell_inventory
@@ -64,20 +62,10 @@ with Buyer {
     show(true)
   }
 
-  /**
-   * In the ideal case, the Actor Owner would be abstract so we only have to 
-   * modify this function to define the behavior of an agent
-   **/
   def action(): Unit = {
     //val filtered = offerState.filter(o => wishList.exists(c => c.name == o.commodity.name) && o.price_unit <= capital)
-    /**
-    if (sell_inventory.lines.isEmpty) {
-        val quant = 10
-        sell_inventory.addLine(InventoryLine(commodity, quant, 9.99))
-        market.enter_sell_order(currentResolution, sell_inventory.lines.head.toOffer(quant, this))
-    } **/
-
-     if (Random.nextInt(1) == 0) {
+    
+    if (Random.nextInt(2) == 0) {
       if (!sell_inventory.lines.isEmpty) {
         market.enter_sell_order(currentResolution, sell_inventory.lines.head.toOffer(1, this))
       }
@@ -92,18 +80,21 @@ with Buyer {
         10000
       ) 
     }
+    println("Stock added")
   }
 
   /** Prints status info (Inventory). */
   def show(sell: Boolean): Unit = { 
     if (sell) {
-      println("-----------------"+ name +" ----------------\n"+ 
+      println("---------------------------------\n"+ 
+      name+"\n"+
       sell_inventory.toString()+
-      "------------------------------------------")
+      "\n---------------------------------\n")
     } else {
-      println("-----------------"+ name +" ----------------\n"+ 
+      println("---------------------------------\n"+ 
+      name+"\n"+
       inventory.toString()+
-      "------------------------------------------")
+      "\n---------------------------------")
     }
   }
 
@@ -118,7 +109,7 @@ with Buyer {
       waitLabel(Turn, 1)
     } 
 
-    println("Market ready !")
+    //println("Market ready !")
 
     while (currentResolution < resolution) {
     //println("Random Investor : Current time " + currentTime)
