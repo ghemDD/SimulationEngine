@@ -39,6 +39,33 @@ object util {
     f.refresh
   }
 
+  def createPlot(graphName: String): Figure = {
+    Figure(graphName)
+  }
+
+  def updatePlot(graphName: String,
+           abscissa: String,
+           ordinal: String,
+           resolution: Int,
+           y: List[Array[Double]],
+           f: Figure): Unit = {
+      // Time
+      val x = new Array[Double](resolution)
+      var i = 0
+      while (i < resolution) {
+        x(i) = i.toDouble
+        i = i + 1
+      }
+
+      val x1 = DenseVector(x)
+      val y1 = y.map(DenseVector(_))
+      val p = f.subplot(0)
+      p.xlabel = abscissa
+      p.ylabel = ordinal
+      for (ys <- y1) p += breeze.plot.plot(x1, ys)
+      f.refresh
+    }
+
   /** Geometric Brownian Motion. For a security in the Black-Scholes Model,
     this needs to be scaled by (multiplied with) the starting price of the
     security. This approximates continuous Brownian Motion for dt time.

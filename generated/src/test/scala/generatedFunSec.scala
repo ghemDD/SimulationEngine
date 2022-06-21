@@ -6,7 +6,11 @@ class generatedFunSec extends org.scalatest.FlatSpec {
 
     
 
+    
+
 /**
+ * 
+ * 
  * "Compiled FunSec example" should "run" in {
         val agents = generated.example.InitData(3, 3, 3, 100.0, 500)
 

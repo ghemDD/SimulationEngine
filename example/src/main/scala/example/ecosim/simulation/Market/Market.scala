@@ -6,6 +6,15 @@ import breeze.linalg._
 import breeze.plot._
 import java.util.ArrayList
 import scala.collection.mutable.{Map, ListBuffer}
+import scala.swing._
+
+ 
+
+class UI extends MainFrame {
+  title = "Market Simulation"
+  preferredSize = new Dimension(720, 480)
+  contents = new Label("Resolution : ")
+}
 
 @lift
 class Market( 
@@ -22,6 +31,9 @@ val resolution: Int) extends Actor {
 
     var timedActions: Array[Int] = null
     var timedParticipation: Array[Int] = null
+
+
+    var offerLog: List[ListBuffer[Offer]] = null
 
     /**
      * Not needed
@@ -93,9 +105,10 @@ val resolution: Int) extends Actor {
                 0
             } else {
                 val bestOffer = filtered(0)
+                val matchOffer = Offer(bestOffer.commodity, bestOffer.seller, units, bestOffer.price_unit)
 
                 // Update owner inventory
-                println(buyer.getName()+" | Purchase registered : "+ bestOffer.toString+" | TOTAL = "+ bestOffer.price_unit * units+" $")
+                println(buyer.getName()+" | Purchase registered : "+ matchOffer.toString+" | TOTAL = "+ bestOffer.price_unit * units +" $")
                 buyer.getInventory().addLine(InventoryLine(commodity, units, bestOffer.price_unit))
 
                 // Update seller inventory
@@ -149,10 +162,16 @@ val resolution: Int) extends Actor {
     
         println("OPENING MARKET")
 
+        val ui = new UI
+        //ui.visible = true
+
         while (currentResolution < resolution) {
             println("-------------- RESOLUTION "+currentResolution+"--------------------")
             //show()
-            
+
+
+            ui.contents = new Label("Resolution "+currentResolution+"\n"+offerState.toString)
+
             // Wait for the actions of all agents to ensure synchronization
             while (timedParticipation(currentResolution) != numberActors) {
                 waitLabel(Turn, 1)

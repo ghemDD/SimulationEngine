@@ -7,6 +7,7 @@ import breeze.plot._
 import java.util.ArrayList
 import scala.collection.mutable.{Map, ListBuffer}
 
+
 /**
  * Residual inventory : asynchronous source of the market
  **/

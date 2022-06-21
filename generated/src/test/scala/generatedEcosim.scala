@@ -4,6 +4,7 @@ import meta.API._
 
 class generatedEcosim extends org.scalatest.FlatSpec {
 
+
     "Compiled MarketSim example" should "run" in {
         val agents = generated.example.InitData(1, List[Double](0.9), 100)
 
@@ -12,10 +13,9 @@ class generatedEcosim extends org.scalatest.FlatSpec {
 
         val results = StartSimulation[AkkaMessagingLayer.type](c)
     }
-    
 
-    /**
-     * 
+    /** 
+     
     
      **/
 }

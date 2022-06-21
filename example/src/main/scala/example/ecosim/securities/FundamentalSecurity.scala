@@ -90,6 +90,8 @@ with InteractiveSecurity {
     timedActions = new Array[Int](resolution)
     timedParticipation = new Array[Int](resolution)
 
+    val figure = util.createPlot("FundamentalSecurity Price")
+
     // Signals to the other agents that the market is open
     open = true
     println("Security Ready")
@@ -104,10 +106,13 @@ with InteractiveSecurity {
 
         aggregate()
 
+        // Update the security price after the simulation is done
+        //util.updatePlot("Security price", "time", "price", resolution, List(timedPrice), figure)
+
         currentResolution = currentResolution + 1
     }
 
-    // Plot the security price after the simulation is done
+    
     util.plot("Security price", "time", "price", resolution, List(timedPrice))
   }
 }

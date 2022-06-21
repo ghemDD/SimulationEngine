@@ -85,10 +85,12 @@ def runAllIn(config: Configuration) = Def.task {
       r.run(c, cp.files, Seq(), s.log))
 }
 
+val scalaSwing = libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0"
+
 lazy val example = (project in file("example"))
   .settings(
     name := f"${project_name}-example",
-    commonSettings, squidSettings,
+    commonSettings, squidSettings, scalaSwing,
     runAll := runAllIn(Compile).value,
     Test / parallelExecution := false
   )
@@ -98,6 +100,6 @@ lazy val genExample = (project in file("generated"))
   .settings(
     name := f"${project_name}-genExample",
     Test / parallelExecution := false,
-    commonSettings, akkaSettings, sparkSettings,
+    commonSettings, akkaSettings, sparkSettings, scalaSwing,
   )
   .dependsOn(core, library, example, gui)

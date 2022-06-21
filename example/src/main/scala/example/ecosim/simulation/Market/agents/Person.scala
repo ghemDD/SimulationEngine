@@ -86,7 +86,7 @@ with Buyer {
         capital
       )
       
-    } else if (boreness > 0.8) {
+    } else if (boredom > 0.8) {
       market.enter_buy_order(
         Commodities.Ticket,
         currentResolution, 
